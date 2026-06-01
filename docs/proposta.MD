@@ -8,16 +8,14 @@ A proposta deve apresentar uma ideia simples, clara e viável para ser desenvolv
 
 Escreva aqui o nome provisório do jogo.
 
-Exemplo:
-
-> Corrida dos Obstáculos
+Meteor Fall
 
 ## 2. Integrantes do grupo
 
 Liste os integrantes do grupo.
 
-- Nome 1:
-- Nome 2:
+- Nome 1:Pedro Fialho Cambraia
+- Nome 2:Heitor Leonardo Leal
 - Nome 3:
 - Nome 4:
 
@@ -42,7 +40,7 @@ Exemplos:
 
 Tipo escolhido pelo grupo:
 
-> Escreva aqui.
+-Desviar de obstaculos/sobrevivencia 
 
 ## 4. Descrição geral do jogo
 
@@ -57,7 +55,7 @@ Procure responder:
 
 Descrição:
 
-> Escreva aqui.
+-O jogador controla uma nave e deve desviar de meteoros que virao cada vez mais rapido enquanto o jogador progride além disso ele pode ter acesso a power ups que facilitaram sua sobrevivecia por tempos mais longos isso tudo visando atingir maiores tempos e bater records.
 
 ## 5. Objetivo do jogador
 
@@ -74,8 +72,8 @@ Exemplos:
 - quebrar todos os blocos.
 
 Objetivo:
-
-> Escreva aqui.
+ 
+-Sobreviver o maximo de tempo possivel.
 
 ## 6. Regras principais
 
@@ -91,11 +89,11 @@ Exemplo:
 
 Regras do grupo:
 
-- Regra 1:
-- Regra 2:
-- Regra 3:
-- Regra 4:
-- Regra 5:
+- Regra 1:Jogador tem uma vida
+- Regra 2:Pode ter apenas um power up
+- Regra 3:Se for acertado gera derrota
+- Regra 4:Se atingir um marcos de distancia ganha pontos adicionais 
+- Regra 5:A velocidades dos meteoros piora de acordo com a distancia percorrida 
 
 ## 7. Condição de vitória
 
@@ -111,7 +109,7 @@ Exemplos:
 
 Condição de vitória:
 
-> Escreva aqui.
+A condicao de vitoria é sobreviver o maximo de tempo possivel 
 
 ## 8. Condição de derrota ou encerramento
 
@@ -127,7 +125,7 @@ Exemplos:
 
 Condição de derrota ou encerramento:
 
-> Escreva aqui.
+-Sendo atingido por qualquer meteoro gera derrota ao jogador
 
 ## 9. Elementos previstos no jogo
 
@@ -141,7 +139,9 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+-Uma nave
+-Power ups de doferentes modelos de acordo com oque fazem
+-Meteoros como obstaculos
 
 ## Obstáculos, inimigos ou desafios
 
@@ -151,7 +151,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+-Diferentes tipos de meteoro podem aparecer
 
 ## Itens, alvos ou objetos de interação
 
@@ -161,7 +161,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+-Power ups que geram aumentos para a nave
 
 ## Pontuação, vidas, tempo ou progresso
 
@@ -171,7 +171,7 @@ Exemplo:
 
 Descrição:
 
-> Escreva aqui.
+-O jogador tem uma vida e a cada certa dostancia percorrida ganha pontos extras na potuacao final.
 
 ## 10. Controles previstos
 
@@ -188,9 +188,9 @@ Exemplo:
 
 Controles do grupo:
 
-- Tecla/comando:
-- Tecla/comando:
-- Tecla/comando:
+- Tecla/comando:As teclas WSAD sendo responsaveis pela direcao da nave
+- Tecla/comando:Tecla espaco para ativar determinados power ups
+- Tecla/comando:Tecla esc para pausar a fase
 
 ## 11. Organização inicial do código
 
@@ -206,7 +206,7 @@ Exemplo:
 
 Organização planejada:
 
-> Escreva aqui.
+-Ainda não planejado por completo
 
 
 ## 12. Recursos externos previstos
@@ -222,7 +222,7 @@ Exemplo:
 
 Recursos previstos:
 
-> Escreva aqui.
+-Pngs e sons para utilizacao na nave meteoros e power ups
 
 Caso não pretenda utilizar recursos externos, escreva:
 
@@ -245,9 +245,9 @@ Exemplos:
 
 Dificuldades previstas:
 
-- Dificuldade 1:
-- Dificuldade 2:
-- Dificuldade 3:
+- Dificuldade 1:Organizacao do codigo
+- Dificuldade 2:Uso de github 
+- Dificuldade 3:E aplicacao dos modelos 
 
 ## 14. Escopo mínimo para a entrega final
 
@@ -261,7 +261,7 @@ Exemplo:
 
 Escopo mínimo:
 
-> Escreva aqui.
+-P escopo minimo aceitavel é que a nave se movimente corretamente e que os obstaculos venham e acelerem com o tempo alem de poder utilizar os power ups.E na funcionalidade a tela de menu e a tabela de ranking e records .
 
 ## 15. Possíveis melhorias, caso haja tempo
 
@@ -281,6 +281,6 @@ Exemplos:
 
 Melhorias possíveis:
 
-- Melhoria 1:
-- Melhoria 2:
-- Melhoria 3:
+- Melhoria 1:Limite de distancia 
+- Melhoria 2:Fases
+- Melhoria 3:Putros tipos de meteoro
