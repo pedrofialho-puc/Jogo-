@@ -144,7 +144,7 @@ def main():
     pygame.init()
 
     tela = pygame.display.set_mode((LARGURA, ALTURA))
-    pygame.display.set_caption("Meteor Fall")
+    pygame.display.set_caption("Isabela drops")
 
     nave_img = pygame.image.load("assets/heitor.jpeg")
     nave_img = pygame.transform.scale(nave_img, (50, 50))
