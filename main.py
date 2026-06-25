@@ -160,7 +160,7 @@ def main():
         tela.fill(PRETO)
 
         titulo = pygame.font.SysFont(None, 80)
-        texto = titulo.render("METEOR FALL", True, BRANCO)
+        texto = titulo.render("Isabela drops", True, BRANCO)
         tela.blit(texto, (190, 150))
 
         botao_jogar = desenhar_botao(tela, "JOGAR", 300, 300, 200, 70)
