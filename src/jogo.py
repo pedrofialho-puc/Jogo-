@@ -1,143 +1,284 @@
 import pygame
+import random
+import os
 
-from src.config import (
-    LARGURA_TELA,
-    ALTURA_TELA,
-    FPS,
-    TITULO_JOGO,
-    CINZA,
-    CAMINHO_RECORDE,
-    CAMINHO_SPRITES,
-)
+LARGURA = 800
+ALTURA = 600
+FPS = 60
 
-from src.funcoes import (
-    calcular_pontos,
-    jogador_perdeu,
-    limitar_valor,
-    verificar_colisao,
-    tomar_dano,
-)
-from src.sprites import pegar_sprite
-from src.dados import (
-    salvar_recorde,
-    carregar_recorde,
-)
+PRETO = (0, 0, 0)
+BRANCO = (255, 255, 255)
+AZUL = (0, 150, 255)
+VERMELHO = (255, 0, 0)
+VERDE = (0, 255, 0)
+
+ARQUIVO_RANKING = "data/ranking.txt"
 
 
-def executar_jogo():
-    """Executa o loop principal do jogo e controla estado, colisões e pontuação."""
+def criar_nave():
+    return pygame.Rect(LARGURA // 2, ALTURA - 80, 50, 50)
+
+
+def criar_meteoro():
+    return pygame.Rect(
+        random.randint(0, LARGURA - 40),
+        random.randint(-300, -40),
+        40,
+        40
+    )
+
+
+def criar_powerup():
+    x = random.randint(50, LARGURA - 100)
+    y = random.randint(50, ALTURA - 200)
+    return pygame.Rect(x, y, 60, 30)
+
+
+def mover_nave(nave, teclas):
+    velocidade = 6
+
+    if teclas[pygame.K_a]:
+        nave.x -= velocidade
+    if teclas[pygame.K_d]:
+        nave.x += velocidade
+    if teclas[pygame.K_w]:
+        nave.y -= velocidade
+    if teclas[pygame.K_s]:
+        nave.y += velocidade
+
+    nave.x = max(0, min(nave.x, LARGURA - nave.width))
+    nave.y = max(0, min(nave.y, ALTURA - nave.height))
+
+
+def mover_meteoro(meteoro, velocidade):
+    meteoro.y += velocidade
+
+    if meteoro.top > ALTURA:
+        meteoro.x = random.randint(0, LARGURA - meteoro.width)
+        meteoro.y = random.randint(-300, -40)
+
+
+def carregar_recorde():
+    if not os.path.exists(ARQUIVO_RANKING):
+        return 0
+
+    try:
+        with open(ARQUIVO_RANKING, "r") as arquivo:
+            pontuacoes = []
+
+            for linha in arquivo:
+                linha = linha.strip()
+                if linha.isdigit():
+                    pontuacoes.append(int(linha))
+
+            if pontuacoes:
+                return max(pontuacoes)
+    except:
+        pass
+
+    return 0
+
+
+def salvar_pontuacao(pontos):
+    os.makedirs("data", exist_ok=True)
+    with open(ARQUIVO_RANKING, "a") as arquivo:
+        arquivo.write(f"{pontos}\n")
+
+
+def desenhar_botao(tela, texto, x, y, largura, altura):
+    mouse = pygame.mouse.get_pos()
+    botao = pygame.Rect(x, y, largura, altura)
+
+    cor = (100, 100, 100)
+    if botao.collidepoint(mouse):
+        cor = (180, 180, 180)
+
+    pygame.draw.rect(tela, cor, botao)
+
+    fonte = pygame.font.SysFont(None, 40)
+    txt = fonte.render(texto, True, BRANCO)
+
+    tela.blit(
+        txt,
+        (
+            x + largura // 2 - txt.get_width() // 2,
+            y + altura // 2 - txt.get_height() // 2
+        )
+    )
+
+    return botao
+
+def desenhar_tela(
+    tela,
+    nave,
+    meteoros,
+    powerup,
+    pontos,
+    recorde,
+    nave_img,
+    meteoro_img,
+    vidas,
+    tempo
+):
+    tela.fill(PRETO)
+
+    tela.blit(nave_img, nave)
+
+    for meteoro in meteoros:
+        tela.blit(meteoro_img, meteoro)
+    fonte_power = pygame.font.SysFont(None, 32)
+    texto_power = fonte_power.render("trair", True, VERDE)
+    tela.blit(texto_power, (powerup.x, powerup.y))
+    fonte = pygame.font.SysFont(None, 36)
+    texto_pontos = fonte.render(f"Pontos: {pontos}", True, BRANCO)
+    texto_recorde = fonte.render(f"Recorde: {recorde}", True, BRANCO)
+    texto_vidas = fonte.render(f"Vida: {vidas}", True, BRANCO)
+    texto_tempo = fonte.render(f"Tempo: {tempo}s", True, BRANCO)
+    tela.blit(texto_pontos, (10, 10))
+    tela.blit(texto_recorde, (10, 50))
+    tela.blit(texto_vidas, (10, 90))
+    tela.blit(texto_tempo, (10, 130))
+    pygame.display.flip()
+def main():
+
     pygame.init()
-    
 
-    tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
-    pygame.display.set_caption(TITULO_JOGO)
+    tela = pygame.display.set_mode((LARGURA, ALTURA))
+    pygame.display.set_caption("Meteor Fall")
+
+    nave_img = pygame.image.load("assets/heitor.jpeg")
+    nave_img = pygame.transform.scale(nave_img, (50, 50))
+
+    meteoro_img = pygame.image.load("assets/ex.jpeg")
+    meteoro_img = pygame.transform.scale(meteoro_img, (40, 40))
 
     relogio = pygame.time.Clock()
+
+
+    tela_inicio = True
+    while tela_inicio:
+        tela.fill(PRETO)
+
+        titulo = pygame.font.SysFont(None, 80)
+        texto = titulo.render("METEOR FALL", True, BRANCO)
+        tela.blit(texto, (190, 150))
+
+        botao_jogar = desenhar_botao(tela, "JOGAR", 300, 300, 200, 70)
+
+        pygame.display.flip()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_jogar.collidepoint(evento.pos):
+                    tela_inicio = False
+
+    nave = criar_nave()
+    meteoros = [criar_meteoro() for _ in range(5)]
+    powerup = criar_powerup()
+
     rodando = True
+    game_over = False
 
-    # 1. Carregando as imagens recortadas do Spritesheet
+    vidas = 1
 
+    powerup_ativo = False
+    tempo_powerup = 0
 
-    # Jogador: usando tamanho 110x110 para capturar o quadrado perfeitamente
-    player_image = pegar_sprite(CAMINHO_SPRITES, x=110, y=120, width=190, height=190, scale=0.5)
+    tempo_inicio = pygame.time.get_ticks()
+    recorde = carregar_recorde()
+    pontuacao_salva = False
 
-    # Gema pequena: usando tamanho 64x64
-    gem_image    = pegar_sprite(CAMINHO_SPRITES, x=900, y=690, width=200, height=200, scale=0.5)
-
-    # Morcego: usando tamanho 180x120 por causa das asas abertas
-    bat_image    = pegar_sprite(CAMINHO_SPRITES, x=905, y=1060, width=200, height=130, scale=0.5)
-    
-    # 2. Criando a estrutura de Sprites usando Dicionários
-    jogador = {
-        "imagem": player_image,
-        "rect": player_image.get_rect(topleft=(100, 100))
-    }
-
-    gema = {
-        "imagem": gem_image,
-        "rect": gem_image.get_rect(topleft=(500, 300))
-    }
-    
-    inimigo = {
-        "imagem": bat_image,
-        "rect": bat_image.get_rect(topleft=(200, 500))
-    }
-
-    velocidade = 5
-    pontos = 0
-    vidas = 3
-    recorde = carregar_recorde(CAMINHO_RECORDE)
-
-    # Loop principal: processa entrada, atualiza estado e renderiza a cena.
     while rodando:
+
         relogio.tick(FPS)
 
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 rodando = False
 
-        teclas = pygame.key.get_pressed()
+            if game_over and evento.type == pygame.MOUSEBUTTONDOWN:
+                botao_reiniciar = desenhar_botao(
+                    tela, "JOGAR NOVAMENTE", 220, 420, 350, 70
+                )
 
-        # Movimentação alterando direto os eixos X e Y do retângulo do jogador
-        if teclas[pygame.K_LEFT]:
-            jogador["rect"].x -= velocidade
-        if teclas[pygame.K_RIGHT]:
-            jogador["rect"].x += velocidade
-        if teclas[pygame.K_UP]:
-            jogador["rect"].y -= velocidade
-        if teclas[pygame.K_DOWN]:
-            jogador["rect"].y += velocidade
+                if botao_reiniciar.collidepoint(evento.pos):
+                    main()
+                    return
 
-        # Limitando o jogador dentro das bordas da tela usando as propriedades do Rect
-        jogador["rect"].x = limitar_valor(jogador["rect"].x, 0, LARGURA_TELA - jogador["rect"].width)
-        jogador["rect"].y = limitar_valor(jogador["rect"].y, 0, ALTURA_TELA - jogador["rect"].height)
+        if not game_over:
 
-        # Verificação de colisão com a Gema (antigo 'item')
-        if verificar_colisao(jogador["rect"], gema["rect"]):
-            pontos = calcular_pontos(pontos, 10)
+            teclas = pygame.key.get_pressed()
+            mover_nave(nave, teclas)
 
-            # Move a gema de lugar ao coletar
-            gema["rect"].x += 80
-            gema["rect"].y += 50
+            tempo_atual = (pygame.time.get_ticks() - tempo_inicio) // 1000
+            pontos = tempo_atual * 10
 
-            # Se a gema sair da tela, volta para uma posição segura
-            if gema["rect"].x > LARGURA_TELA - gema["rect"].width:
-                gema["rect"].x = 50
-            if gema["rect"].y > ALTURA_TELA - gema["rect"].height:
-                gema["rect"].y = 50
+            velocidade_meteoro = 5 + (tempo_atual // 10)
 
-        # Verificação de colisão com o Inimigo
-        if verificar_colisao(jogador["rect"], inimigo["rect"]):
-            vidas = tomar_dano(vidas, 1)
+            if powerup_ativo:
+                velocidade_meteoro = max(2, velocidade_meteoro - 3)
 
-            # Afasta o inimigo ao colidir
-            inimigo["rect"].x += 80
-            inimigo["rect"].y += 50
+                if pygame.time.get_ticks() - tempo_powerup > 5000:
+                    powerup_ativo = False
 
-            if inimigo["rect"].x > LARGURA_TELA - inimigo["rect"].width:
-                inimigo["rect"].x = 50
-            if inimigo["rect"].y > ALTURA_TELA - inimigo["rect"].height:
-                inimigo["rect"].y = 50
+            for meteoro in meteoros:
+                mover_meteoro(meteoro, velocidade_meteoro)
 
-        # Regras de fim de jogo e recorde
-        if jogador_perdeu(vidas):
-            rodando = False
+                if nave.colliderect(meteoro):
+                    vidas -= 1
+                    if vidas <= 0:
+                        game_over = True
 
-        if pontos > recorde:
-            recorde = pontos
-            salvar_recorde(CAMINHO_RECORDE, recorde)
+            if nave.colliderect(powerup):
+                powerup_ativo = True
+                tempo_powerup = pygame.time.get_ticks()
+                powerup = criar_powerup()
 
-        pygame.display.set_caption(
-            f"{TITULO_JOGO} | Pontos: {pontos} | Recorde: {recorde} | Vidas: {vidas}"
-        )
+            desenhar_tela(
+                tela,
+                nave,
+                meteoros,
+                powerup,
+                pontos,
+                recorde,
+                nave_img,
+                meteoro_img,
+                vidas,
+                tempo_atual
+            )
 
-        tela.fill(CINZA)
+        else:
 
-        # Desenhando os elementos na tela passando a imagem e o rect de cada dicionário
-        tela.blit(gema["imagem"], gema["rect"])
-        tela.blit(inimigo["imagem"], inimigo["rect"])
-        tela.blit(jogador["imagem"], jogador["rect"])
+            if not pontuacao_salva:
+                salvar_pontuacao(pontos)
 
-        pygame.display.flip()
+                if pontos > recorde:
+                    recorde = pontos
+
+                pontuacao_salva = True
+
+            tela.fill(PRETO)
+
+            fonte = pygame.font.SysFont(None, 50)
+
+            texto1 = fonte.render("GAME OVER", True, BRANCO)
+            texto2 = fonte.render(f"Pontuacao: {pontos}", True, BRANCO)
+            texto3 = fonte.render(f"Recorde: {recorde}", True, BRANCO)
+
+            tela.blit(texto1, (250, 200))
+            tela.blit(texto2, (220, 280))
+            tela.blit(texto3, (220, 340))
+
+            desenhar_botao(tela, "JOGAR NOVAMENTE", 220, 420, 350, 70)
+
+            pygame.display.flip()
 
     pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
